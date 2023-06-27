@@ -4,7 +4,6 @@ import numpy as np
 import random
 
 from .spaces import * 
-#test 
 
 # Abstract class for defining different types of input files
 class Input_Template(ABC): 
@@ -74,7 +73,7 @@ class Input_Capsule():
         self.text_wrapper    = Txt_Wrapper(template_path)
 
         # Define parameter space from which to sample 
-        self.var_space       = Variable_Space(variable_definition_path)
+        self.var_space       = Variable_Space(variable_definition_path = variable_definition_path)
 
         # Sample parameter variations from parameter space and make set of input files
         vars            = self.var_space.sample(num=num_experiments)
@@ -84,3 +83,33 @@ class Input_Capsule():
         # Write input parameters
         # TODO: Make sure the approprite save function is working
         self.text_wrapper.save(self.input_list[instance_num], save_path)
+
+
+# class to contain a set experiment input files
+# TODO: Test this 
+class DOE_Capsule(): 
+    def __init__(self, num_experiments, var_def, output_path=None): 
+
+        # Define parameter space from which to sample 
+        self.var_space = Variable_Space(var_def)
+
+        # Sample parameter variations from parameter space and make set of input files
+        self.var_sets = self.var_space.sample(num=num_experiments)
+
+        # Generate DOE in the appropriate format using var
+        self.experiments = [] 
+        for var_set in self.var_sets:
+            var_def_instance = var_def 
+            for var_name, var_instance in var_set: 
+                var_def_instance[var_name].instance = var_instance
+            self.experiments.append(var_def_instance)
+
+    def save(self, instance_num, save_path):
+        # Write input parameters
+        self.vars.to_csv(output_path+"\doe.csv")
+
+
+
+
+
+
